@@ -23,11 +23,12 @@ const sans = Be_Vietnam_Pro({
   display: "swap",
 });
 
-// Vercel provides the project's production domain, so share previews link to the real site.
-const domain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+// Share previews need absolute URLs. Pinned to the canonical domain: Vercel's production-domain variable
+// can name the shorter automatic domain, which only redirects here. Previews point at it too.
+const site = process.env.VERCEL ? "https://happy-valentine-from-perceval.vercel.app" : "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(domain ? `https://${domain}` : "http://localhost:3000"),
+  metadataBase: new URL(site),
   title: valentine.tabTitle,
   description: valentine.share.description,
   // A personal page: keep it out of search engines.
