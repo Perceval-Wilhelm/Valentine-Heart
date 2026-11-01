@@ -1,0 +1,37 @@
+name: Production smoke
+
+on:
+  # Vercel reports each deployment to GitHub; production ones are smoke-tested once the domain serves them.
+  deployment_status:
+  schedule:
+    - cron: "17 1 * * *" # 08:17 Asia/Ho_Chi_Minh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valentine-heart-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Valentine Heart production
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      # The script uses only Node built-ins, so nothing is installed.
+      - run: node scripts/smoke.mjs
+        env:
+          SMOKE_URL: https://happy-valentine-from-perceval.vercel.app
+          # After a production deployment, wait until the domain serves that commit (deployment checks run first).
+          SMOKE_EXPECT_BUILD: ${{ github.event_name == 'deployment_status' && github.event.deployment.sha || '' }}

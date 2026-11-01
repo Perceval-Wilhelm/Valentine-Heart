@@ -1,0 +1,63 @@
+name: Check Valentine Heart
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valentine-heart-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Valentine Heart quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      # Node 25+ no longer bundles Corepack; Vercel runs the same pinned release.
+      - run: npm install --global corepack@0.36.0
+      - run: corepack yarn install --immutable
+      - run: corepack yarn npm audit --all --recursive --severity high
+      - run: corepack yarn check:all
+
+  browser:
+    name: Valentine Heart browser
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          # Verify the patch currently supplied by Vercel; quality tests use .nvmrc.
+          node-version: 26.13.0
+      # Node 25+ no longer bundles Corepack; Vercel runs the same pinned release.
+      - run: npm install --global corepack@0.36.0
+      - run: corepack yarn install --immutable
+      - run: corepack yarn exec playwright install --with-deps chromium
+      - run: corepack yarn build
+      - run: corepack yarn test:e2e
+      - name: Save browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore

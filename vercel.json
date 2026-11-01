@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npx --yes corepack@0.36.0 yarn build",
+  "installCommand": "npx --yes corepack@0.36.0 yarn install --immutable",
+  "outputDirectory": null,
+  "regions": ["sin1"]
+}
