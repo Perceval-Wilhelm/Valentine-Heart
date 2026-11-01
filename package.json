@@ -2,7 +2,9 @@
   "name": "valentine-heart",
   "private": true,
   "version": "2.0.0",
-  "description": "A heart made of light for Kim Tú: stardust that gathers into a beating heart and spells the name.",
+  "description": "A heart made of light: stardust that gathers into a beating 3D heart, bursts when love is sent and writes a name in particles.",
+  "license": "UNLICENSED",
+  "repository": "github:Perceval-Wilhelm/valentine-heart",
   "type": "module",
   "packageManager": "yarn@4.18.1",
   "engines": {

@@ -1,0 +1,25 @@
+Copyright (c) 2025-2026 Bùi Quốc Thịnh (Perceval-Wilhelm).
+All rights reserved.
+
+This repository is public so that its source can be viewed as a personal
+project and portfolio piece. No licence is granted to copy, modify, distribute
+or reuse any part of it, including the source code, the shaders, the design,
+the copy and the generated images, except where the law allows it or GitHub's
+Terms of Service permit viewing and forking on GitHub. Ask the owner for
+written permission for any other use.
+
+The page is a personal message. The recipient's name and the message itself
+may not be reused in any form.
+
+This notice does not cover third-party material, which remains under its own
+terms:
+
+- public/2025.html, the original 2025 page, started from a widely shared
+  "pinkboard" canvas heart snippet whose author is not named in the copy it
+  came from, and includes Erik Möller's requestAnimationFrame polyfill. It is
+  kept unchanged for its history, and no rights in it are claimed or granted.
+- The heart distance function in src/features/heart/shaders.ts is Inigo
+  Quilez's (https://iquilezles.org/articles/distfunctions2d/).
+- The Fraunces and Be Vietnam Pro typefaces are distributed under the SIL Open
+  Font License 1.1 and are self-hosted through next/font.
+- Open-source dependencies listed in package.json keep their own licences.

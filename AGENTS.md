@@ -34,6 +34,7 @@ For visual changes, check a 375 px phone and a 1440 px desktop, with and without
 - Every interaction needs a fallback: the button for the tap, the automatic name reveal for the long press, the CSS heart without WebGL, and the server-rendered message without JavaScript.
 - Respect `prefers-reduced-motion`: no gathering, beating, aura, bursts or automatic name; light and fades stay.
 - Keep the first load within the budgets in `e2e/valentine.spec.ts` (script under 180 KB, fonts under 200 KB compressed).
+- The repository is all rights reserved (`LICENSE`). List any new third-party code, fonts or images there with their terms.
 
 ## Dependencies and delivery
 

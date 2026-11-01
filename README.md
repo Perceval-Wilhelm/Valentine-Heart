@@ -66,3 +66,7 @@ GitHub Actions runs **Valentine Heart quality** and **Valentine Heart browser** 
 ## Credits
 
 Made by [Bùi Quốc Thịnh](https://github.com/Perceval-Wilhelm). The 2025 page started from the widely shared "pinkboard" canvas heart; its original author is not named in the copy it came from. The heart distance function in the aura shader is [Inigo Quilez's](https://iquilezles.org/articles/distfunctions2d/).
+
+## License
+
+All rights reserved. The repository is public for viewing as a personal project and portfolio piece. No licence is granted to reuse its code, shaders, design, copy or images, and the recipient's name and message may not be reused in any form. The 2025 page, Inigo Quilez's distance function, the Fraunces and Be Vietnam Pro typefaces and open-source dependencies keep their own terms. See [LICENSE](LICENSE).

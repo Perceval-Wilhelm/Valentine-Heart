@@ -4,7 +4,7 @@ Configuration set up on **1 November 2026**, based on the open-kiln and happy-bi
 
 ## Project identity
 
-- GitHub: [Perceval-Wilhelm/Valentine-Heart](https://github.com/Perceval-Wilhelm/Valentine-Heart).
+- GitHub: [Perceval-Wilhelm/valentine-heart](https://github.com/Perceval-Wilhelm/valentine-heart), renamed from `Valentine-Heart` on 1 November 2026. Repository names are case-insensitive, so old links still resolve; Vercel tracks the repository by ID (`932362662`).
 - Commits: authored as `Bùi Quốc Thịnh <82101710+Perceval-Wilhelm@users.noreply.github.com>`, the owner's GitHub noreply address, and pushed as Perceval-Wilhelm.
 - Vercel: [valentine-heart](https://vercel.com/perceval-wilhelms-projects/valentine-heart) (`prj_fRBKt8cVy61K3PUaOGnGy166PRKx`), in the personal `perceval-wilhelms-projects` workspace (Hobby).
 - Production: [happy-valentine-from-perceval.vercel.app](https://happy-valentine-from-perceval.vercel.app). The automatic `valentine-heart-lac.vercel.app` redirects to it (308). `valentine-heart.vercel.app` belongs to someone else's project.
