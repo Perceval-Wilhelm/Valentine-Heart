@@ -23,6 +23,8 @@ export type HeartScene = {
   pointer: (x: number, y: number, active: boolean) => void;
   burst: () => void;
   holdName: (on: boolean) => void;
+  /** While sound is on, the heartbeat clock keeps running even when reduced motion has nothing to draw. */
+  listen: (on: boolean) => void;
   replay: () => void;
   setReducedMotion: (reduced: boolean) => void;
   dispose: () => void;
@@ -72,6 +74,7 @@ export function createHeartScene(canvas: HTMLCanvasElement, options: SceneOption
   let textBuffer = resources.buffers.text;
   let drawCount = heartCount;
   let reduced = options.reducedMotion;
+  let listening = false;
   let lost = false;
   let disposed = false;
   let frame = 0;
@@ -234,8 +237,9 @@ export function createHeartScene(canvas: HTMLCanvasElement, options: SceneOption
     gl.drawArrays(gl.POINTS, 0, drawCount);
     gl.bindVertexArray(null);
 
-    // Reduced motion draws only while something changes, then rests until the next interaction.
-    const settled = reduced && nameValue === nameTarget && clock - burstAt > 1.5 && Math.abs(pointer.strength) < 0.01;
+    // Reduced motion draws only while something changes (or the heartbeat is heard), then rests.
+    const settled =
+      reduced && !listening && nameValue === nameTarget && clock - burstAt > 1.5 && Math.abs(pointer.strength) < 0.01;
     if (!settled) frame = requestAnimationFrame(render);
   }
 
@@ -324,6 +328,10 @@ export function createHeartScene(canvas: HTMLCanvasElement, options: SceneOption
       touched = true;
       autoNameUntil = -1;
       nameTarget = on && formedAt >= 0 ? 1 : 0;
+      wake();
+    },
+    listen(on) {
+      listening = on;
       wake();
     },
     replay() {

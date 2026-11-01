@@ -43,10 +43,12 @@ export function ValentineCard({ content }: { content: ValentineContent }) {
     if (!audio) return;
     if (sound) {
       audio.disable();
+      sceneRef.current?.listen(false);
       setSound(false);
       return;
     }
     const running = await audio.enable();
+    sceneRef.current?.listen(running);
     setSound(running);
     if (running) moment("sound-on");
   }
