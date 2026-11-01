@@ -32,6 +32,21 @@ test("a healthy site passes every check", async () => {
   assert.deepEqual(await smoke("https://example.test", { ...quiet, request: site() }), []);
 });
 
+test("reads every response, so no connection keeps Node running afterwards", async () => {
+  const responses = [];
+  const request = site();
+  await smoke("https://example.test", {
+    ...quiet,
+    request: async (...args) => {
+      const response = await request(...args);
+      responses.push(response);
+      return response;
+    },
+  });
+  assert.equal(responses.length, 6);
+  for (const response of responses) assert.ok(response.body === null || response.bodyUsed, `unread ${response.status}`);
+});
+
 test("a missing header or page is reported by name", async () => {
   const failures = await smoke("https://example.test", {
     ...quiet,
