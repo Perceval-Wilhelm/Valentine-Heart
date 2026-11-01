@@ -82,3 +82,10 @@ Not used: Vercel CI (beta) would repeat the GitHub Actions jobs, whose results a
 ## Recovery
 
 A `main` commit whose checks fail never takes over the production domains; the previous deployment stays live. For a problem the checks missed, use Vercel's **Instant Rollback** (Hobby can return only to the previous production deployment), then fix forward with a PR. Rollback moves the domain; it does not change Git history. Do not bypass required checks or force-push `main`.
+
+## Setup notes
+
+Two Vercel behaviours met while setting this up, worth knowing for the next project:
+
+- **A new project's first deployment is always production**, whatever its branch. Here it was a push to the pull request branch, which would have taken the production domain once its checks passed. That deployment (`dpl_62xoFBtZmr9BmB4J2R6aPLJMAi3o`) was cancelled before it built, and the preview was created through the API (`POST /v13/deployments` with a `gitSource` and no `target`). Pull request pushes have built previews since.
+- **`vercel curl` creates a deployment protection bypass token** for the project the first time it reaches a protected preview, without asking. The token created on 1 November 2026 was revoked straight after use. Check with `vercel api /v9/projects/valentine-heart` (`protectionBypass` should be empty) and revoke any leftover token with `PATCH /v1/projects/valentine-heart/protection-bypass`.
