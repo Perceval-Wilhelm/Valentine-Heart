@@ -2,11 +2,11 @@ import { ImageResponse } from "next/og";
 import { valentine } from "@/content/valentine";
 import { createRandom, sampleHeart } from "@/features/heart/geometry";
 
-export const alt = `${valentine.share.title}: a glowing heart made of light, from ${valentine.from}`;
+export const alt = `${valentine.share.title}: ${valentine.share.description}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const signature = `from ${valentine.from}`;
+const signature = valentine.share.byline;
 
 // Without a browser user agent, Google Fonts returns TrueType, which is what the image renderer reads;
 // `text` trims the font to just the letters drawn here.
