@@ -128,7 +128,8 @@ test("keeps the heart but drops the movement for reduced motion", async ({ page 
   await page.clock.runFor(FORMED + AUTO_NAME);
   await expect(stage).toHaveAttribute("data-phase", "heart");
   await page.getByRole("button", { name: "Send love" }).click();
-  expect(await light(page)).toBeGreaterThan(0.02);
+  // A still heart lights about 2% of its area (CI's software renderer: 1.8%); an empty canvas, 0.1%.
+  expect(await light(page)).toBeGreaterThan(0.01);
   expect(await axeViolations(page)).toEqual([]);
   expect(problems).toEqual([]);
 });
