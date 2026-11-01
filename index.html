@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE html>
 <HTML>
 
 <HEAD>
@@ -10,6 +10,7 @@
     <style>
         html,
         body {
+            height: 100%;
             overflow: hidden;
             padding: 0;
             margin: 0;
@@ -23,12 +24,9 @@
         }
         
         canvas {
-            /* top: 50%;
-            left: 50%; */
             z-index: 1;
             display: block;
             position: absolute;
-            transform: translate(-50%, -50%);
             animation: heart 1.5s ease infinite
         }
         
@@ -155,7 +153,7 @@
                 function ease(t) {
                     return (--t) * t * t + 1;
                 }
-                var size = image.width * ease(this.age / settings.particles.duration);
+                var size = settings.particles.size * ease(this.age / settings.particles.duration);
                 context.globalAlpha = 1 - this.age / settings.particles.duration;
                 context.drawImage(image, this.position.x - size / 2, this.position.y - size / 2, size, size);
             };
@@ -245,9 +243,12 @@
             // creating the particle image using a dummy canvas
             var image = (function() {
                 var canvas = document.createElement('canvas'),
-                    context = canvas.getContext('2d');
-                canvas.width = settings.particles.size;
-                canvas.height = settings.particles.size;
+                    context = canvas.getContext('2d'),
+                    dpr = window.devicePixelRatio;
+                // shortcut: sprite keeps the load-time pixel ratio, rebuild it on resize if moving between screens matters
+                canvas.width = settings.particles.size * dpr;
+                canvas.height = settings.particles.size * dpr;
+                context.scale(dpr, dpr);
                 // helper function to create the path
                 function to(t) {
                     var point = pointOnHeart(t);
@@ -281,8 +282,9 @@
                 requestAnimationFrame(render);
 
                 // update time
-                var newTime = new Date().getTime() / 1000,
-                    deltaTime = newTime - (time || newTime);
+                var newTime = performance.now() / 1000,
+                    // a hidden tab pauses rAF; without the cap the first frame back spawns thousands of particles
+                    deltaTime = Math.min(newTime - (time || newTime), 0.1);
                 time = newTime;
 
                 // clear canvas
@@ -293,7 +295,7 @@
                 for (var i = 0; i < amount; i++) {
                     var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
                     var dir = pos.clone().length(settings.particles.velocity);
-                    particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
+                    particles.add(canvas.clientWidth / 2 + pos.x, canvas.clientHeight / 2 - pos.y, dir.x, -dir.y);
                 }
 
                 // update and draw particles
@@ -303,8 +305,10 @@
 
             // handle (re-)sizing of the canvas
             function onResize() {
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
+                var dpr = window.devicePixelRatio;
+                canvas.width = canvas.clientWidth * dpr;
+                canvas.height = canvas.clientHeight * dpr;
+                context.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS pixels on the larger backing store
             }
             window.onresize = onResize;
 
