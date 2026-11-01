@@ -16,7 +16,16 @@ describe("ValentineCard", () => {
     render(<ValentineCard content={valentine} />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(`${valentine.greeting} ${valentine.to}`);
     expect(screen.getByText(valentine.from, { exact: false })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: valentine.actions.classic })).toHaveAttribute("href", "/2025.html");
+    if (valentine.classic)
+      expect(screen.getByRole("link", { name: valentine.classic })).toHaveAttribute("href", "/2025.html");
+    else expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("follows the content file for another recipient, and can hide the 2025 link", () => {
+    const content = { ...valentine, to: "Minh Anh", greeting: "Chúc mừng Valentine,", classic: null };
+    render(<ValentineCard content={content} />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Chúc mừng Valentine, Minh Anh");
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 
   it("falls back to a drawn heart when WebGL is unavailable, and says so in analytics", async () => {

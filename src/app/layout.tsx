@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: valentine.share.title,
     description: valentine.share.description,
     type: "website",
-    locale: "en_US",
+    locale: valentine.locale,
   },
   twitter: { card: "summary_large_image", title: valentine.share.title, description: valentine.share.description },
 };
@@ -46,7 +46,7 @@ export const viewport: Viewport = { themeColor: "#06020b", colorScheme: "dark", 
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang={valentine.lang} className={`${display.variable} ${sans.variable}`}>
       <body>
         {children}
         <ErrorReporter />

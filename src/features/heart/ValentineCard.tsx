@@ -254,10 +254,12 @@ export function ValentineCard({ content }: { content: ValentineContent }) {
         </button>
       </div>
 
-      <a className="classic" href="/2025.html" onClick={() => moment("opened-2025")}>
-        <span aria-hidden="true">♡</span>
-        {actions.classic}
-      </a>
+      {content.classic ? (
+        <a className="classic" href="/2025.html" onClick={() => moment("opened-2025")}>
+          <span aria-hidden="true">♡</span>
+          {content.classic}
+        </a>
+      ) : null}
 
       <noscript>
         <style>{".stage .fallback-heart { opacity: 1; } .stage .actions { display: none; }"}</style>

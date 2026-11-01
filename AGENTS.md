@@ -29,11 +29,12 @@ For visual changes, check a 375 px phone and a 1440 px desktop, with and without
 ## Product boundaries
 
 - Keep added copy free of pronouns, so personalising stays one edit in `valentine.ts`.
+- Every user-facing string, the page language and the 2025 link live in `src/content/valentine.ts`. New copy goes there too, and tests read expected text from it rather than repeating it, so changing the recipient never breaks the checks.
 - Telemetry is milestone names (`/moments/*` virtual page views, once per visit) and error reports only. Never send names, text or query strings. Analytics mount only in Vercel production builds.
 - The page must stay `noindex` with its robots rules and CSP. New third-party origins need a CSP change and a reason.
 - Every interaction needs a fallback: the button for the tap, the automatic name reveal for the long press, the CSS heart without WebGL, and the server-rendered message without JavaScript.
 - Respect `prefers-reduced-motion`: no gathering, beating, aura, bursts or automatic name; light and fades stay.
-- Keep the first load within the budgets in `e2e/valentine.spec.ts` (script under 180 KB, fonts under 200 KB compressed).
+- Keep the first load within the budgets in `e2e/valentine.spec.ts` (script under 180 KB, fonts under 240 KB compressed, which allows for Vietnamese copy).
 - The repository is all rights reserved (`LICENSE`). List any new third-party code, fonts or images there with their terms.
 
 ## Dependencies and delivery

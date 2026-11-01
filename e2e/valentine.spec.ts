@@ -1,6 +1,10 @@
 import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { valentine } from "../src/content/valentine";
+
+// Expected text comes from the content file, so a new recipient needs no test changes.
+const heading = `${valentine.greeting} ${valentine.to}`;
 
 // Stardust drifts for 0.6 s and gathers for 2.8 s; the name writes itself 5 s after the heart forms.
 // Playwright's fake clock skips through all of it.
@@ -63,15 +67,15 @@ async function open(page: Page, { frozen = false } = {}) {
 test("gathers stardust into a heart, then writes the name in light", async ({ page }) => {
   const problems = await open(page, { frozen: true });
   const stage = page.locator(".stage");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Happy Valentine, Kim Tú");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
   await page.clock.runFor(300);
   await expect(stage).toHaveAttribute("data-phase", "intro");
-  await expect(page.getByRole("button", { name: "Send love" })).toBeHidden();
+  await expect(page.getByRole("button", { name: valentine.actions.send })).toBeHidden();
   const dust = await light(page);
 
   await page.clock.runFor(FORMED);
   await expect(stage).toHaveAttribute("data-phase", "heart");
-  await expect(page.getByRole("button", { name: "Send love" })).toBeVisible();
+  await expect(page.getByRole("button", { name: valentine.actions.send })).toBeVisible();
   // The heart lights about 2% of its area (CI's software renderer: a little less); an empty canvas, 0.1%.
   const heart = await light(page);
   expect(heart).toBeGreaterThan(0.01);
@@ -93,7 +97,7 @@ test("bursts when love is sent and writes the name while the heart is held", asy
   await page.clock.runFor(FORMED);
   const resting = await light(page, ".stage");
 
-  await page.getByRole("button", { name: "Send love" }).click();
+  await page.getByRole("button", { name: valentine.actions.send }).click();
   await page.clock.runFor(300);
   expect(await light(page, ".stage")).toBeGreaterThan(resting * 1.3);
   await page.clock.runFor(2_500);
@@ -112,7 +116,7 @@ test("bursts when love is sent and writes the name while the heart is held", asy
 
 test("turns the heartbeat sound on and off", async ({ page }) => {
   const problems = await open(page);
-  const sound = page.getByRole("button", { name: "Heartbeat sound" });
+  const sound = page.getByRole("button", { name: valentine.actions.sound });
   await expect(sound).toHaveAttribute("aria-pressed", "false");
   await sound.click();
   await expect(sound).toHaveAttribute("aria-pressed", "true");
@@ -128,7 +132,7 @@ test("keeps the heart but drops the movement for reduced motion", async ({ page 
   await expect(stage).toHaveAttribute("data-phase", "heart");
   await page.clock.runFor(FORMED + AUTO_NAME);
   await expect(stage).toHaveAttribute("data-phase", "heart");
-  await page.getByRole("button", { name: "Send love" }).click();
+  await page.getByRole("button", { name: valentine.actions.send }).click();
   // A still heart lights about 2% of its area (CI's software renderer: 1.8%); an empty canvas, 0.1%.
   expect(await light(page)).toBeGreaterThan(0.01);
   expect(await axeViolations(page)).toEqual([]);
@@ -147,7 +151,7 @@ test("draws a beating heart instead when WebGL is unavailable", async ({ page })
   await page.goto("/");
   await expect(page.locator(".stage")).toHaveAttribute("data-scene", "fallback");
   await expect(page.locator(".fallback-heart")).toHaveCSS("opacity", "1");
-  await expect(page.getByRole("button", { name: "Send love" })).toBeVisible();
+  await expect(page.getByRole("button", { name: valentine.actions.send })).toBeVisible();
   expect(await axeViolations(page)).toEqual([]);
   expect(problems).toEqual([]);
 });
@@ -180,7 +184,7 @@ test.describe("release", () => {
     const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
     const page = await context.newPage();
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Happy Valentine, Kim Tú");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
     await expect(page.locator(".fallback-heart")).toHaveCSS("opacity", "1");
     await expect(page.locator(".actions")).toBeHidden();
     await context.close();
@@ -203,7 +207,8 @@ test.describe("release", () => {
 
   test("keeps the first load light", async ({ page }) => {
     // Measured on 1 November 2026: 149 KB of compressed script (the WebGL scene is about 10 KB of it)
-    // and 175 KB of fonts. The budgets leave room for small changes and catch a new library.
+    // and 175 KB of fonts for English copy; Vietnamese copy adds its subset, 210 KB in all. The budgets
+    // leave room for either language and still catch a new library, font or weight.
     const sizes: Promise<[string, number]>[] = [];
     page.on("response", (response) => {
       const type = response.request().resourceType();
@@ -219,13 +224,13 @@ test.describe("release", () => {
     const kilobytes = (type: string) =>
       loaded.filter(([kind]) => kind === type).reduce((sum, [, size]) => sum + size, 0) / 1024;
     expect(kilobytes("script")).toBeLessThan(180);
-    expect(kilobytes("font")).toBeLessThan(200);
+    expect(kilobytes("font")).toBeLessThan(240);
   });
 
   test("leads lost visitors back to the heart", async ({ page }) => {
     const response = await page.goto("/a-page-that-does-not-exist");
     expect(response?.status()).toBe(404);
-    await page.getByRole("link", { name: "Back to the heart" }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Happy Valentine, Kim Tú");
+    await page.getByRole("link", { name: valentine.notFound.back }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
   });
 });

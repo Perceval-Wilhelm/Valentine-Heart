@@ -21,7 +21,25 @@ Reduced-motion settings get a still, glowing heart with no gathering, beating or
 
 ## Make it for someone else
 
-Everything personal is in [`src/content/valentine.ts`](src/content/valentine.ts): the name (also drawn in particles, so keep it to a word or two), the sender, the greeting, the tab title, the share-preview text and the button labels. The share image for Messenger, Zalo and iMessage previews is generated from the same file.
+Everything personal or language-specific is in one file, [`src/content/valentine.ts`](src/content/valentine.ts). The page, the share preview and image, the 404 and error pages and the tests all read it, so a new recipient needs no other change.
+
+1. Change the four values at the top:
+
+   | Value       | What it is                                                               |
+   | ----------- | ------------------------------------------------------------------------ |
+   | `to`        | The recipient's name. It is also written in particles, so keep it short. |
+   | `from`      | The sender's name, under the heart and in the share preview.             |
+   | `greeting`  | The line above the name, such as `Happy Valentine,`.                     |
+   | `signature` | Shown before the sender's name (an emoji works well).                    |
+
+   The tab title and share text are built from them.
+
+2. Optionally adjust the rest of the file:
+   - `lang` and `locale` when the copy is in another language: `"vi"` and `"vi_VN"` for Vietnamese. Vietnamese letters load their own font files only when used.
+   - `classic`: the corner link to the original 2025 page. Set it to `null` to hide it for someone else.
+   - The button labels, and the wording of the share description, 404 page and error page.
+
+3. Open a pull request. Once both checks pass, merge it (or queue auto-merge) and Vercel publishes it to the same address. The address names no one, so it can stay.
 
 ## Develop
 
